@@ -1,0 +1,80 @@
+{
+  "codebase": {
+    "name": "Chat Application",
+    "source": "example"
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "user",
+        "label": "User",
+        "description": "Sends and receives messages",
+        "type": "client"
+      },
+      {
+        "id": "server",
+        "label": "Server",
+        "description": "Handles connections and routing",
+        "type": "server"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "description": "Stores message history",
+        "type": "storage"
+      },
+      {
+        "id": "notifier",
+        "label": "Notifier",
+        "description": "Pushes alerts to offline users",
+        "type": "service"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-user-server",
+        "source": "user",
+        "target": "server",
+        "direction": "bi"
+      },
+      {
+        "id": "e-server-db",
+        "source": "server",
+        "target": "db",
+        "direction": "uni"
+      },
+      {
+        "id": "e-server-notifier",
+        "source": "server",
+        "target": "notifier",
+        "direction": "uni"
+      },
+      {
+        "id": "e-notifier-user",
+        "source": "notifier",
+        "target": "user",
+        "direction": "uni"
+      }
+    ]
+  },
+  "layers": [
+    {
+      "title": "The Conversation",
+      "explanation": "At its core, this is a conversation. The user and server talk to each other in real time — messages flow both ways through a persistent connection.",
+      "addNodes": ["user", "server"],
+      "addEdges": ["e-user-server"]
+    },
+    {
+      "title": "Memory",
+      "explanation": "Conversations need memory. The server stores every message in a database so nothing is lost when you close the app.",
+      "addNodes": ["db"],
+      "addEdges": ["e-server-db"]
+    },
+    {
+      "title": "The Other Path",
+      "explanation": "What if the user isn't watching? The server sends a signal to a notifier, which reaches the user through a completely different channel — a push notification. Two separate paths now lead back to the user.",
+      "addNodes": ["notifier"],
+      "addEdges": ["e-server-notifier", "e-notifier-user"]
+    }
+  ]
+}
