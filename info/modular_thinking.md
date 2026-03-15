@@ -1,10 +1,14 @@
 # Modular Thinking
 
-## 1. Visual Mockup
+## 1. Visual Mockup Architecture
 
-The visual mockup is about the LOOK — the layout, the interaction patterns, the aesthetic. It uses the Superpowers Visual Brainstorming skill to generate interactive HTML mockups in-browser with a feedback loop. This is where we nail down what the user sees, clicks, and experiences — independent of any real data.
+The visual mockup architecture is about the LOOK for the architecture — the layout, the interaction patterns, the aesthetic. This is where we nail down what the user sees, clicks, and experiences — independent of any real data. The architectural mockup will have "un-clickable" components.
 
-## 2. Actual Content
+## 2. Visual Mockup Code
+
+The visual mockup code is about the LOOK for the two-pane coding blocks corresponding to "clickable" components in the architectural diagram. This is where we nail down the layout and experience of how the user experience the coding portion with mock data.
+
+## 3. Actual Content
 
 The actual content is what fills the visual system — the real codebase analysis, the layered reconstruction, the Feynman-style explanations. This comes from the Claude Agent SDK scanning a codebase and producing structured output that feeds into the visual mockup's containers.
 
