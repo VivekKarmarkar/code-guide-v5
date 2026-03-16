@@ -1,0 +1,158 @@
+{
+  "codebase": {
+    "name": "REST API Backend",
+    "source": "https://github.com/example/rest-api-backend"
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "client",
+        "label": "Web Client",
+        "description": "Browser or mobile app making HTTP requests",
+        "type": "client"
+      },
+      {
+        "id": "gateway",
+        "label": "API Gateway",
+        "description": "Routes requests, enforces rate limits, strips headers",
+        "type": "gateway"
+      },
+      {
+        "id": "auth",
+        "label": "Auth Service",
+        "description": "Issues and validates JWT tokens against user credentials",
+        "type": "auth"
+      },
+      {
+        "id": "server",
+        "label": "App Server",
+        "description": "Core business logic handling CRUD operations",
+        "type": "server"
+      },
+      {
+        "id": "db",
+        "label": "PostgreSQL",
+        "description": "Primary relational store for users, orders, and resources",
+        "type": "storage"
+      },
+      {
+        "id": "cache",
+        "label": "Redis Cache",
+        "description": "Holds hot query results and session data in memory",
+        "type": "cache"
+      },
+      {
+        "id": "queue",
+        "label": "Message Queue",
+        "description": "Buffers async tasks so the app server can respond immediately",
+        "type": "messaging"
+      },
+      {
+        "id": "worker",
+        "label": "Background Worker",
+        "description": "Processes queued jobs like email sends and report generation",
+        "type": "service"
+      },
+      {
+        "id": "email",
+        "label": "Email Provider",
+        "description": "External SMTP service for transactional emails",
+        "type": "service"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "client",
+        "target": "gateway",
+        "direction": "bi"
+      },
+      {
+        "id": "e2",
+        "source": "gateway",
+        "target": "server",
+        "direction": "bi"
+      },
+      {
+        "id": "e3",
+        "source": "server",
+        "target": "db",
+        "direction": "bi"
+      },
+      {
+        "id": "e4",
+        "source": "gateway",
+        "target": "auth",
+        "direction": "bi"
+      },
+      {
+        "id": "e5",
+        "source": "auth",
+        "target": "db",
+        "direction": "bi"
+      },
+      {
+        "id": "e6",
+        "source": "server",
+        "target": "cache",
+        "direction": "bi"
+      },
+      {
+        "id": "e7",
+        "source": "server",
+        "target": "queue",
+        "direction": "uni"
+      },
+      {
+        "id": "e8",
+        "source": "queue",
+        "target": "worker",
+        "direction": "uni"
+      },
+      {
+        "id": "e9",
+        "source": "worker",
+        "target": "db",
+        "direction": "bi"
+      },
+      {
+        "id": "e10",
+        "source": "worker",
+        "target": "email",
+        "direction": "uni"
+      }
+    ]
+  },
+  "layers": [
+    {
+      "title": "The Basic Request Loop",
+      "explanation": "A client talks to a server that reads and writes a database — this is the irreducible skeleton of any REST API. Every other piece in the system exists because this simple loop hits limits at scale or complexity.",
+      "addNodes": ["client", "gateway", "server", "db"],
+      "addEdges": ["e1", "e2", "e3"]
+    },
+    {
+      "title": "Who Are You?",
+      "explanation": "An auth service sits between the gateway and the database to verify identity before any request touches business logic. Without it, every endpoint is public and anyone can read or mutate anyone else's data.",
+      "addNodes": ["auth"],
+      "addEdges": ["e4", "e5"]
+    },
+    {
+      "title": "Stop Asking the Database the Same Question",
+      "explanation": "A Redis cache gives the app server a fast in-memory layer so repeated reads hit RAM instead of disk. The database is the bottleneck in almost every web app, and caching is the cheapest way to relieve it.",
+      "addNodes": ["cache"],
+      "addEdges": ["e6"]
+    },
+    {
+      "title": "Do It Later",
+      "explanation": "A message queue lets the app server hand off slow work and respond to the client immediately. Sending an email or generating a PDF doesn't need to block a 200ms API response — so we decouple the trigger from the execution.",
+      "addNodes": ["queue", "worker"],
+      "addEdges": ["e7", "e8", "e9"]
+    },
+    {
+      "title": "The Outside World",
+      "explanation": "The background worker connects to an external email provider to actually deliver transactional messages. This is where the system's boundary meets a third-party service it doesn't control, introducing retries and failure handling.",
+      "addNodes": ["email"],
+      "addEdges": ["e10"]
+    }
+  ]
+}

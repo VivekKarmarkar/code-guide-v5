@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --edge-stroke: #9ca3af;
+  --particle-color: #EF4444;
+}
+
+.dark {
+  --bg-primary: #0a0a0a;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --border-color: #27272a;
+  --edge-stroke: #6b7280;
+  --particle-color: #EF4444;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.react-flow,
+.react-flow *[class*="background"],
+.react-flow *[class*="pane"] {
+  background: var(--bg-primary) !important;
+  background-color: var(--bg-primary) !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
