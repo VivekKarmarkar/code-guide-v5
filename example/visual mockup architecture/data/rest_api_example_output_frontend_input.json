@@ -1,0 +1,651 @@
+{
+  "codebase": {
+    "name": "REST API Backend",
+    "source": "https://github.com/example/rest-api-backend"
+  },
+  "layers": [
+    {
+      "title": "The Basic Request Loop",
+      "explanation": "A client talks to a server that reads and writes a database — this is the irreducible skeleton of any REST API. Every other piece in the system exists because this simple loop hits limits at scale or complexity.",
+      "nodeIds": [
+        "client",
+        "gateway",
+        "server",
+        "db"
+      ],
+      "edgeIds": [
+        "e1-fwd",
+        "e1-rev",
+        "e2-fwd",
+        "e2-rev",
+        "e3-fwd",
+        "e3-rev"
+      ]
+    },
+    {
+      "title": "Who Are You?",
+      "explanation": "An auth service sits between the gateway and the database to verify identity before any request touches business logic. Without it, every endpoint is public and anyone can read or mutate anyone else's data.",
+      "nodeIds": [
+        "client",
+        "gateway",
+        "server",
+        "db",
+        "auth"
+      ],
+      "edgeIds": [
+        "e1-fwd",
+        "e1-rev",
+        "e2-fwd",
+        "e2-rev",
+        "e3-fwd",
+        "e3-rev",
+        "e4-fwd",
+        "e4-rev",
+        "e5-fwd",
+        "e5-rev"
+      ]
+    },
+    {
+      "title": "Stop Asking the Database the Same Question",
+      "explanation": "A Redis cache gives the app server a fast in-memory layer so repeated reads hit RAM instead of disk. The database is the bottleneck in almost every web app, and caching is the cheapest way to relieve it.",
+      "nodeIds": [
+        "client",
+        "gateway",
+        "server",
+        "db",
+        "auth",
+        "cache"
+      ],
+      "edgeIds": [
+        "e1-fwd",
+        "e1-rev",
+        "e2-fwd",
+        "e2-rev",
+        "e3-fwd",
+        "e3-rev",
+        "e4-fwd",
+        "e4-rev",
+        "e5-fwd",
+        "e5-rev",
+        "e6-fwd",
+        "e6-rev"
+      ]
+    },
+    {
+      "title": "Do It Later",
+      "explanation": "A message queue lets the app server hand off slow work and respond to the client immediately. Sending an email or generating a PDF doesn't need to block a 200ms API response — so we decouple the trigger from the execution.",
+      "nodeIds": [
+        "client",
+        "gateway",
+        "server",
+        "db",
+        "auth",
+        "cache",
+        "queue",
+        "worker"
+      ],
+      "edgeIds": [
+        "e1-fwd",
+        "e1-rev",
+        "e2-fwd",
+        "e2-rev",
+        "e3-fwd",
+        "e3-rev",
+        "e4-fwd",
+        "e4-rev",
+        "e5-fwd",
+        "e5-rev",
+        "e6-fwd",
+        "e6-rev",
+        "e7",
+        "e8",
+        "e9-fwd",
+        "e9-rev"
+      ]
+    },
+    {
+      "title": "The Outside World",
+      "explanation": "The background worker connects to an external email provider to actually deliver transactional messages. This is where the system's boundary meets a third-party service it doesn't control, introducing retries and failure handling.",
+      "nodeIds": [
+        "client",
+        "gateway",
+        "server",
+        "db",
+        "auth",
+        "cache",
+        "queue",
+        "worker",
+        "email"
+      ],
+      "edgeIds": [
+        "e1-fwd",
+        "e1-rev",
+        "e2-fwd",
+        "e2-rev",
+        "e3-fwd",
+        "e3-rev",
+        "e4-fwd",
+        "e4-rev",
+        "e5-fwd",
+        "e5-rev",
+        "e6-fwd",
+        "e6-rev",
+        "e7",
+        "e8",
+        "e9-fwd",
+        "e9-rev",
+        "e10"
+      ]
+    }
+  ],
+  "reactFlow": {
+    "nodes": [
+      {
+        "id": "client",
+        "type": "architectureNode",
+        "position": {
+          "x": 1807,
+          "y": 65
+        },
+        "data": {
+          "label": "Web Client",
+          "description": "Browser or mobile app making HTTP requests",
+          "semanticType": "client",
+          "color": "#3B82F6",
+          "layerIndex": 0,
+          "edgeCount": 1,
+          "width": 460,
+          "height": 72
+        },
+        "style": {
+          "width": 460,
+          "height": 72
+        }
+      },
+      {
+        "id": "gateway",
+        "type": "architectureNode",
+        "position": {
+          "x": 1080,
+          "y": 50
+        },
+        "data": {
+          "label": "API Gateway",
+          "description": "Routes requests, enforces rate limits, strips headers",
+          "semanticType": "gateway",
+          "color": "#A855F7",
+          "layerIndex": 0,
+          "edgeCount": 3,
+          "width": 573,
+          "height": 95
+        },
+        "style": {
+          "width": 573,
+          "height": 95
+        }
+      },
+      {
+        "id": "auth",
+        "type": "architectureNode",
+        "position": {
+          "x": 50,
+          "y": 95
+        },
+        "data": {
+          "label": "Auth Service",
+          "description": "Issues and validates JWT tokens against user credentials",
+          "semanticType": "auth",
+          "color": "#F97316",
+          "layerIndex": 1,
+          "edgeCount": 2,
+          "width": 603,
+          "height": 72
+        },
+        "style": {
+          "width": 603,
+          "height": 72
+        }
+      },
+      {
+        "id": "server",
+        "type": "architectureNode",
+        "position": {
+          "x": 172,
+          "y": 267
+        },
+        "data": {
+          "label": "App Server",
+          "description": "Core business logic handling CRUD operations",
+          "semanticType": "server",
+          "color": "#14B8A6",
+          "layerIndex": 0,
+          "edgeCount": 4,
+          "width": 481,
+          "height": 72
+        },
+        "style": {
+          "width": 481,
+          "height": 72
+        }
+      },
+      {
+        "id": "db",
+        "type": "architectureNode",
+        "position": {
+          "x": 1066.6666666666665,
+          "y": 245
+        },
+        "data": {
+          "label": "PostgreSQL",
+          "description": "Primary relational store for users, orders, and resources",
+          "semanticType": "storage",
+          "color": "#22C55E",
+          "layerIndex": 0,
+          "edgeCount": 3,
+          "width": 613,
+          "height": 72
+        },
+        "style": {
+          "width": 613,
+          "height": 72
+        }
+      },
+      {
+        "id": "cache",
+        "type": "architectureNode",
+        "position": {
+          "x": 1053,
+          "y": 589
+        },
+        "data": {
+          "label": "Redis Cache",
+          "description": "Holds hot query results and session data in memory",
+          "semanticType": "cache",
+          "color": "#F59E0B",
+          "layerIndex": 2,
+          "edgeCount": 1,
+          "width": 542,
+          "height": 72
+        },
+        "style": {
+          "width": 542,
+          "height": 72
+        }
+      },
+      {
+        "id": "queue",
+        "type": "architectureNode",
+        "position": {
+          "x": 1053,
+          "y": 417
+        },
+        "data": {
+          "label": "Message Queue",
+          "description": "Buffers async tasks so the app server can respond immediately",
+          "semanticType": "messaging",
+          "color": "#6366F1",
+          "layerIndex": 3,
+          "edgeCount": 2,
+          "width": 654,
+          "height": 72
+        },
+        "style": {
+          "width": 654,
+          "height": 72
+        }
+      },
+      {
+        "id": "worker",
+        "type": "architectureNode",
+        "position": {
+          "x": 1807,
+          "y": 257
+        },
+        "data": {
+          "label": "Background Worker",
+          "description": "Processes queued jobs like email sends and report generation",
+          "semanticType": "service",
+          "color": "#EC4899",
+          "layerIndex": 3,
+          "edgeCount": 3,
+          "width": 644,
+          "height": 72
+        },
+        "style": {
+          "width": 644,
+          "height": 72
+        }
+      },
+      {
+        "id": "email",
+        "type": "architectureNode",
+        "position": {
+          "x": 2551,
+          "y": 257
+        },
+        "data": {
+          "label": "Email Provider",
+          "description": "External SMTP service for transactional emails",
+          "semanticType": "service",
+          "color": "#EC4899",
+          "layerIndex": 4,
+          "edgeCount": 1,
+          "width": 501,
+          "height": 72
+        },
+        "style": {
+          "width": 501,
+          "height": 72
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1-fwd",
+        "source": "client",
+        "target": "gateway",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e1",
+          "direction": "fwd",
+          "elkPath": "M 1807 113 L 1653 113"
+        }
+      },
+      {
+        "id": "e1-rev",
+        "source": "gateway",
+        "target": "client",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e1",
+          "direction": "rev",
+          "elkPath": "M 1653 82 L 1757 82 L 1757 89 L 1807 89"
+        }
+      },
+      {
+        "id": "e2-fwd",
+        "source": "gateway",
+        "target": "server",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e2",
+          "direction": "fwd",
+          "elkPath": "M 1080 107 L 803 107 L 803 276 L 653 276"
+        }
+      },
+      {
+        "id": "e2-rev",
+        "source": "server",
+        "target": "gateway",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e2",
+          "direction": "rev",
+          "elkPath": "M 653 285 L 953 285 L 953 126 L 1080 126"
+        }
+      },
+      {
+        "id": "e3-fwd",
+        "source": "server",
+        "target": "db",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e3",
+          "direction": "fwd",
+          "elkPath": "M 653 294 L 1003 294 L 1003 288 L 1066.6666666666665 288"
+        }
+      },
+      {
+        "id": "e3-rev",
+        "source": "db",
+        "target": "server",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e3",
+          "direction": "rev",
+          "elkPath": "M 1066.6666666666665 303 L 653 303"
+        }
+      },
+      {
+        "id": "e4-fwd",
+        "source": "gateway",
+        "target": "auth",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 1,
+          "originalEdgeId": "e4",
+          "direction": "fwd",
+          "elkPath": "M 1080 88 L 753 88 L 753 124 L 653 124"
+        }
+      },
+      {
+        "id": "e4-rev",
+        "source": "auth",
+        "target": "gateway",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 1,
+          "originalEdgeId": "e4",
+          "direction": "rev",
+          "elkPath": "M 653 109 L 703 109 L 703 69 L 1080 69"
+        }
+      },
+      {
+        "id": "e5-fwd",
+        "source": "auth",
+        "target": "db",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 1,
+          "originalEdgeId": "e5",
+          "direction": "fwd",
+          "elkPath": "M 653 153 L 853 153 L 853 274 L 1066.6666666666665 274"
+        }
+      },
+      {
+        "id": "e5-rev",
+        "source": "db",
+        "target": "auth",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 1,
+          "originalEdgeId": "e5",
+          "direction": "rev",
+          "elkPath": "M 1066.6666666666665 259 L 903 259 L 903 138 L 653 138"
+        }
+      },
+      {
+        "id": "e6-fwd",
+        "source": "server",
+        "target": "cache",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 2,
+          "originalEdgeId": "e6",
+          "direction": "fwd",
+          "elkPath": "M 653 330 L 703 330 L 703 637 L 1053 637"
+        }
+      },
+      {
+        "id": "e6-rev",
+        "source": "cache",
+        "target": "server",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 2,
+          "originalEdgeId": "e6",
+          "direction": "rev",
+          "elkPath": "M 1053 613 L 753 613 L 753 321 L 653 321"
+        }
+      },
+      {
+        "id": "e7",
+        "source": "server",
+        "target": "queue",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 3,
+          "originalEdgeId": "e7",
+          "direction": "fwd",
+          "elkPath": "M 653 312 L 803 312 L 803 453 L 1053 453"
+        }
+      },
+      {
+        "id": "e8",
+        "source": "queue",
+        "target": "worker",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 3,
+          "originalEdgeId": "e8",
+          "direction": "fwd",
+          "elkPath": "M 1707 453 L 1757 453 L 1757 311 L 1807 311"
+        }
+      },
+      {
+        "id": "e9-fwd",
+        "source": "worker",
+        "target": "db",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 3,
+          "originalEdgeId": "e9",
+          "direction": "fwd",
+          "elkPath": "M 1807 293 L 1679.6666666666665 293"
+        }
+      },
+      {
+        "id": "e9-rev",
+        "source": "db",
+        "target": "worker",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 3,
+          "originalEdgeId": "e9",
+          "direction": "rev",
+          "elkPath": "M 1679.6666666666665 269 L 1757 269 L 1757 275 L 1807 275"
+        }
+      },
+      {
+        "id": "e10",
+        "source": "worker",
+        "target": "email",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 4,
+          "originalEdgeId": "e10",
+          "direction": "fwd",
+          "elkPath": "M 2451 293 L 2551 293"
+        }
+      }
+    ]
+  }
+}

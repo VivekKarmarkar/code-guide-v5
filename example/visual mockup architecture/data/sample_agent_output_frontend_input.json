@@ -1,0 +1,235 @@
+{
+  "codebase": {
+    "name": "Chat Application",
+    "source": "example"
+  },
+  "layers": [
+    {
+      "title": "The Conversation",
+      "explanation": "At its core, this is a conversation. The user and server talk to each other in real time — messages flow both ways through a persistent connection.",
+      "nodeIds": [
+        "user",
+        "server"
+      ],
+      "edgeIds": [
+        "e-user-server-fwd",
+        "e-user-server-rev"
+      ]
+    },
+    {
+      "title": "Memory",
+      "explanation": "Conversations need memory. The server stores every message in a database so nothing is lost when you close the app.",
+      "nodeIds": [
+        "user",
+        "server",
+        "db"
+      ],
+      "edgeIds": [
+        "e-user-server-fwd",
+        "e-user-server-rev",
+        "e-server-db"
+      ]
+    },
+    {
+      "title": "The Other Path",
+      "explanation": "What if the user isn't watching? The server sends a signal to a notifier, which reaches the user through a completely different channel — a push notification. Two separate paths now lead back to the user.",
+      "nodeIds": [
+        "user",
+        "server",
+        "db",
+        "notifier"
+      ],
+      "edgeIds": [
+        "e-user-server-fwd",
+        "e-user-server-rev",
+        "e-server-db",
+        "e-server-notifier",
+        "e-notifier-user"
+      ]
+    }
+  ],
+  "reactFlow": {
+    "nodes": [
+      {
+        "id": "user",
+        "type": "architectureNode",
+        "position": {
+          "x": 1023,
+          "y": 337
+        },
+        "data": {
+          "label": "User",
+          "description": "Sends and receives messages",
+          "semanticType": "client",
+          "color": "#3B82F6",
+          "layerIndex": 0,
+          "edgeCount": 2,
+          "width": 324,
+          "height": 74
+        },
+        "style": {
+          "width": 324,
+          "height": 74
+        }
+      },
+      {
+        "id": "server",
+        "type": "architectureNode",
+        "position": {
+          "x": 50,
+          "y": 330
+        },
+        "data": {
+          "label": "Server",
+          "description": "Handles connections and routing",
+          "semanticType": "server",
+          "color": "#14B8A6",
+          "layerIndex": 0,
+          "edgeCount": 3,
+          "width": 367,
+          "height": 74
+        },
+        "style": {
+          "width": 367,
+          "height": 74
+        }
+      },
+      {
+        "id": "db",
+        "type": "architectureNode",
+        "position": {
+          "x": 567,
+          "y": 50
+        },
+        "data": {
+          "label": "Database",
+          "description": "Stores message history",
+          "semanticType": "storage",
+          "color": "#22C55E",
+          "layerIndex": 1,
+          "edgeCount": 1,
+          "width": 270,
+          "height": 74
+        },
+        "style": {
+          "width": 270,
+          "height": 74
+        }
+      },
+      {
+        "id": "notifier",
+        "type": "architectureNode",
+        "position": {
+          "x": 567,
+          "y": 224
+        },
+        "data": {
+          "label": "Notifier",
+          "description": "Pushes alerts to offline users",
+          "semanticType": "service",
+          "color": "#EC4899",
+          "layerIndex": 2,
+          "edgeCount": 2,
+          "width": 356,
+          "height": 100
+        },
+        "style": {
+          "width": 356,
+          "height": 100
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e-user-server-fwd",
+        "source": "user",
+        "target": "server",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e-user-server",
+          "direction": "fwd",
+          "elkPath": "M 1023 393 L 973 393 L 973 425 L 467 425 L 467 389 L 417 389"
+        }
+      },
+      {
+        "id": "e-user-server-rev",
+        "source": "server",
+        "target": "user",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 0,
+          "originalEdgeId": "e-user-server",
+          "direction": "rev",
+          "elkPath": "M 417 374 L 1023 374"
+        }
+      },
+      {
+        "id": "e-server-db",
+        "source": "server",
+        "target": "db",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 1,
+          "originalEdgeId": "e-server-db",
+          "direction": "fwd",
+          "elkPath": "M 417 345 L 467 345 L 467 87 L 567 87"
+        }
+      },
+      {
+        "id": "e-server-notifier",
+        "source": "server",
+        "target": "notifier",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 2,
+          "originalEdgeId": "e-server-notifier",
+          "direction": "fwd",
+          "elkPath": "M 417 360 L 517 360 L 517 274 L 567 274"
+        }
+      },
+      {
+        "id": "e-notifier-user",
+        "source": "notifier",
+        "target": "user",
+        "type": "elkRouted",
+        "animated": false,
+        "style": {
+          "strokeDasharray": "6 4",
+          "stroke": "#6B7280",
+          "strokeWidth": 1.5
+        },
+        "data": {
+          "layerIndex": 2,
+          "originalEdgeId": "e-notifier-user",
+          "direction": "fwd",
+          "elkPath": "M 923 274 L 973 274 L 973 356 L 1023 356"
+        }
+      }
+    ]
+  }
+}
